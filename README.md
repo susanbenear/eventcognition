@@ -1,5 +1,5 @@
-# eventcognition
-Repo for two projects focused on the development of event cognition from my doctoral work at Temple University:
+# Development of Event Cognition
+Repo for two projects focused on the development of event cognition in early childhood from my doctoral work at Temple University:
 
 Benear et al., 2023, _Developmental Science._ [https://doi.org/10.1111/desc.13409](url)
 
