@@ -1,0 +1,209 @@
+e---
+title: "rsa lme's"
+author: "Susan Benear"
+date: '2022-06-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '~/Dissertation/Imaging_Data/rsa/csvs_full_NEW/')
+
+#setwd('/Users/susanbenear/Google_Drive/Dissertation/Imaging_Data/rsa/csvs_full_NEW/')
+library(lme4)
+library(lmerTest)
+```
+
+```{r}
+#PCC
+#pulling in the .csv for adults
+adultPCC<-read.csv("dissim_square_PCC_adults_newbounds.csv")
+#removing the weird X column it creates
+adultPCC <- subset(adultPCC, select = -c(X))
+#renaming the column containing the indicator of whether each value is within or boundary
+names(adultPCC)[1] <- "withboun"
+
+#repeat for kids
+kidPCC<-read.csv("dissim_square_PCC_kids_newbounds.csv")
+kidPCC <- subset(kidPCC, select = -c(X))
+names(kidPCC)[1] <- "withboun"
+```
+
+```{r}
+#run the lme for adults
+PCCmodela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultPCC)
+summary(PCCmodela)
+
+#run the lme for kids
+PCCmodelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidPCC)
+summary(PCCmodelk)
+```
+
+
+```{r}
+#V1
+adultV1<-read.csv("dissim_square_V1_adults_newbounds.csv")
+adultV1 <- subset(adultV1, select = -c(X))
+names(adultV1)[1] <- "withboun"
+kidV1<-read.csv("dissim_square_V1_kids_newbounds.csv")
+kidV1 <- subset(kidV1, select = -c(X))
+names(kidV1)[1] <- "withboun"
+
+#if you want to z-standardize the dissimilarity values, here's how:
+#adultV1$dissimvalues<-scale(adultV1$dissimvalues, center = TRUE, scale = TRUE)
+```
+
+```{r}
+V1modela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultV1)
+summary(V1modela)
+
+V1modelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidV1)
+summary(V1modelk)
+
+```
+
+```{r}
+#LAG
+adultLAG<-read.csv("dissim_square_LAG_adults_newbounds.csv")
+adultLAG <- subset(adultLAG, select = -c(X))
+names(adultLAG)[1] <- "withboun"
+kidLAG<-read.csv("dissim_square_LAG_kids_newbounds.csv")
+kidLAG <- subset(kidLAG, select = -c(X))
+names(kidLAG)[1] <- "withboun"
+```
+
+```{r}
+LAGmodela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultLAG)
+summary(LAGmodela)
+
+LAGmodelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidLAG)
+summary(LAGmodelk)
+
+```
+
+```{r}
+#RAG
+adultRAG<-read.csv("dissim_square_RAG_adults_newbounds.csv")
+adultRAG <- subset(adultRAG, select = -c(X))
+names(adultRAG)[1] <- "withboun"
+kidRAG<-read.csv("dissim_square_RAG_kids_newbounds.csv")
+kidRAG <- subset(kidRAG, select = -c(X))
+names(kidRAG)[1] <- "withboun"
+```
+
+```{r}
+RAGmodela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultRAG)
+summary(RAGmodela)
+
+RAGmodelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidRAG)
+summary(RAGmodelk)
+
+```
+
+```{r}
+#LHC
+adultLHC<-read.csv("dissim_square_LHC_adults_newbounds.csv")
+adultLHC <- subset(adultLHC, select = -c(X))
+names(adultLHC)[1] <- "withboun"
+kidLHC<-read.csv("dissim_square_LHC_kids_newbounds.csv")
+kidLHC <- subset(kidLHC, select = -c(X))
+names(kidLHC)[1] <- "withboun"
+```
+
+```{r}
+LHCmodela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultLHC)
+summary(LHCmodela)
+
+LHCmodelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidLHC)
+summary(LHCmodelk)
+
+```
+
+```{r}
+#RHC
+adultRHC<-read.csv("dissim_square_RHC_adults_newbounds.csv")
+adultRHC <- subset(adultRHC, select = -c(X))
+names(adultRHC)[1] <- "withboun"
+kidRHC<-read.csv("dissim_square_RHC_kids_newbounds.csv")
+kidRHC <- subset(kidRHC, select = -c(X))
+names(kidRHC)[1] <- "withboun"
+```
+
+```{r}
+RHCmodela<-lmer(dissimvalues~withboun+(1|subjnum), data=adultRHC)
+summary(RHCmodela)
+
+RHCmodelk<-lmer(dissimvalues~withboun+(1|subjnum), data=kidRHC)
+summary(RHCmodelk)
+
+```
+
+```{r}
+###RHC KID BOUNDARIES PLOT###
+
+RHCkidswithin<-kidRHC[which(kidRHC$withboun=='within'), ]
+RHCkidswithin<-subset(RHCkidswithin, select=c(dissimvalues))
+colnames(RHCkidswithin)<-c('Within')
+
+RHCkidsboundary<-kidRHC[which(kidRHC$withboun=='boundary'), ]
+RHCkidsboundary<-subset(RHCkidsboundary, select=c(dissimvalues))
+colnames(RHCkidsboundary)<-c('Boundary')
+
+RHCkiddata<-cbind(RHCkidswithin,RHCkidsboundary)
+
+RHCkiddatamelted <-melt(RHCkiddata)
+```
+
+```{r}
+kidRHCplot<-ggplot(RHCkiddatamelted, aes(x=variable, y=value, fill=variable)) + 
+  geom_boxplot(width=.6, position = position_dodge(1), outlier.size = -1, color="black", lwd=0.7, alpha = 0.7, 
+        outlier.alpha = 0.1) +
+  geom_point(shape = 21, size=3, position = position_jitterdodge(jitter.width = .15, dodge.width = 1), 
+            color="black", alpha=0.6) +
+  ylim(0, 1.7) +
+  #geom_dotplot(binaxis='y', stackdir='center', dotsize=.5) +
+  scale_x_discrete(limits=c("Within","Boundary"), 
+                   labels=c("Within","Boundary")) +
+  scale_fill_manual(values=c("deepskyblue3","darkorange")) +
+  ylab("Dissimilarity Scores") + xlab("") + ggtitle("Child Boundaries") +
+  theme(axis.text=element_text(size=25),axis.title=element_text(size=25),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      panel.background = element_blank(), axis.line = element_line(colour = "black"), 
+      plot.title = element_text(size=30, hjust = 0.5), legend.position = "none")
+```
+
+```{r}
+###RHC ADULT BOUNDARIES PLOT###
+
+RHCadultswithin<-adultRHC[which(adultRHC$withboun=='within'), ]
+RHCadultswithin<-subset(RHCadultswithin, select=c(dissimvalues))
+colnames(RHCadultswithin)<-c('Within')
+
+RHCadultsboundary<-adultRHC[which(adultRHC$withboun=='boundary'), ]
+RHCadultsboundary<-subset(RHCadultsboundary, select=c(dissimvalues))
+colnames(RHCadultsboundary)<-c('Boundary')
+
+RHCadultdata<-cbind(RHCadultswithin,RHCadultsboundary)
+
+RHCadultdatamelted <-melt(RHCadultdata)
+```
+
+```{r}
+adultRHCplot<-ggplot(RHCadultdatamelted, aes(x=variable, y=value, fill=variable)) + 
+  geom_boxplot(width=.6, position = position_dodge(1), outlier.size = -1, color="black", lwd=0.7, alpha = 0.7, 
+        outlier.alpha = 0.1) +
+  geom_point(shape = 21, size=3, position = position_jitterdodge(jitter.width = .15, dodge.width = 1), 
+            color="black", alpha=0.6) +
+  ylim(0, 1.7) +
+  #geom_dotplot(binaxis='y', stackdir='center', dotsize=.5) +
+  scale_x_discrete(limits=c("Within","Boundary"), 
+                   labels=c("Within","Boundary")) +
+  scale_fill_manual(values=c("deepskyblue3","darkorange")) +
+  ylab("Dissimilarity Scores") + xlab("") + ggtitle("Adult Boundaries") +
+  theme(axis.text=element_text(size=25),axis.title=element_text(size=25),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      panel.background = element_blank(), axis.line = element_line(colour = "black"), 
+      plot.title = element_text(size=30, hjust = 0.5), legend.position = "none")
+```
+
+
+

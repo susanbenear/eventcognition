@@ -1,0 +1,855 @@
+---
+title: "Free Recall Project Analyses"
+output: html_notebook
+---
+```{r}
+#load in packages
+packages <- c("effects","psych", "dplyr", "ggplot2", "tidyr")
+invisible(lapply(packages, function(pkg) suppressMessages(suppressWarnings(library(pkg, character.only = TRUE)))))
+```
+
+# Load in data and set up dataframe/variables
+```{r}
+setwd("/path/to/data/from/OSF/")
+df<-read.csv("FreeRecall_Data_BothEpisodes_Updated.csv")
+describe(df)
+```
+
+```{r}
+# add proportion of ext and int temporal order correct to the df
+
+#first add a tiny fraction to the 0's so we can do the calculations
+df <- df %>% mutate(scene_number2 = scene_number + .00001)
+df <- df %>% mutate(detail_number2 = detail_number + .00001)
+
+# calculate proportion correct as number scenes/details in order divided by total number scenes/details
+df <- df %>% mutate(extTO_prop = extTO / scene_number2)
+df <- df %>% mutate(intTO_prop = intTO / detail_number2)
+df <- df %>% mutate(sum_prop = summary / (summary + detail_number2))
+```
+
+```{r}
+# create adult- and kid-only data frames
+
+adf<-df[which(df$group=='A'), ]
+kdf<-df[which(df$group=='K'), ]
+```
+
+```{r}
+# set up plotting variables
+# this helps the ggplot code blocks be cleaner and less bulky
+
+plot_theme <- theme(axis.text=element_text(size=23),axis.title=element_text(size=20),axis.text.x=element_text(colour="black"),
+      panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      panel.background = element_blank(), axis.line = element_line(colour = "black"), 
+      plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+plot_boxplot <- geom_boxplot(position = position_dodge(1), outlier.size = -1, color="black", lwd=0.7, alpha = 0.7, outlier.alpha = 0.1)
+  
+plot_point <- geom_point(shape = 21, size=3, position = position_jitterdodge(jitter.width = .15, dodge.width = 1), color="black", alpha=0.6)
+
+plot_KA_scale <- scale_x_discrete(limits=c("K","A"), labels=c("Children","Adults")) 
+```
+
+# Examine variables - full dataset
+```{r}
+# Define the variables of interest
+variables_of_interest <- c("age","recog","tempord","scene_number","detail_number","scaledcorz_adultlike","kbit","kbit_raw","cantab468")
+subset_df <- df[, variables_of_interest]
+
+# Remove non-numeric variables if any
+numeric_vars <- subset_df[sapply(subset_df, is.numeric)]
+
+# Loop through each variable
+for (var in names(numeric_vars)) {
+    cat("Variable:", var, "\n")
+    
+    # Histogram
+    hist(numeric_vars[[var]], main = paste("Histogram of", var))
+    
+    # Shapiro-Wilk Test
+    shapiro_test <- shapiro.test(numeric_vars[[var]])
+    cat("Shapiro-Wilk Test p-value:", shapiro_test$p.value, "\n\n")
+}
+```
+
+# Examine variables - kids only
+```{r}
+# Define the variables of interest
+variables_of_interest <- c("age_cont","recog","tempord","scene_number","detail_number","scaledcorz_adultlike","kbit","kbit_raw","cantab468")
+subset_df <- kdf[, variables_of_interest]
+
+# Remove non-numeric variables if any
+numeric_vars <- subset_df[sapply(subset_df, is.numeric)]
+
+# Loop through each numeric variable
+for (var in names(numeric_vars)) {
+    cat("Variable:", var, "\n")
+    
+    # Histogram
+    hist(numeric_vars[[var]], main = paste("Histogram of", var))
+
+    # Shapiro-Wilk Test
+    shapiro_test <- shapiro.test(numeric_vars[[var]])
+    cat("Shapiro-Wilk Test p-value:", shapiro_test$p.value, "\n\n")
+}
+```
+
+# Correlation Matrices
+```{r}
+for (df_name in c("df", "adf", "kdf")) {
+assign(df_name, within(get(df_name), cantab468_reverse <- cantab468 * -1))
+}
+# Define the variables of interest
+variables_of_interest <- c("age","recog","tempord","scene_number","detail_number","scaledcorz_adultlike","kbit_raw")
+
+# Loop through each dataframe and subset it
+for (df_name in c("df", "adf", "kdf")) {
+  # Create a subset dataframe by selecting the variables of interest
+  subset_df <- get(df_name)[, variables_of_interest]
+  
+  # Drop rows with missing values
+  subset_df <- na.omit(subset_df)
+  
+# Current variable names
+  old_names <- names(subset_df)
+
+# Specify new variable names corresponding to the original order
+  new_names <- c("Age",  "FC Recog.", "FC Temp. Ord.", "Scene Recall", "Detail Recall","Event Cog.", "Verbal Skills")
+
+# Rename variables
+  names(subset_df) <- new_names
+
+# Check the dataframe with new variable names
+  #print(subset_df) 
+  
+  # Compute correlation matrix
+  cor_matrix <- cor(subset_df)
+  
+  # Plot correlation matrix with stars indicating significance
+  corrplot(cor_matrix, method = "color", type = "lower", order = "original", col = COL2('PuOr'),
+           tl.col = "black", tl.srt = 45, addCoef.col = "white",
+           main = paste("Correlation Matrix for", df_name),
+           mar = c(1, 1, 1, 1),  # Adjust margins
+           tl.cex = 0.8,          # Adjust square size
+           number.cex = 0.7)      # Adjust number size
+  
+  # Convert correlation matrix to data frame
+  cor_df <- as.data.frame(cor_matrix)
+  
+  alpha <- 0.05
+  
+  # Iterate through each pair of variables to compute p-values and add stars
+  for (i in 1:(ncol(cor_matrix)-1)) {
+    for (j in (i+1):ncol(cor_matrix)) {
+      cor_test <- cor.test(subset_df[,new_names[i]], subset_df[,new_names[j]])
+      if (cor_test$p.value < alpha) {
+        cor_df[j,i] <- sprintf("%.2f*", cor_matrix[j,i])
+      } else {
+        cor_df[j,i] <- sprintf("%.2f", cor_matrix[j,i])
+      }
+    }
+  }
+  
+  # Print correlation matrix with stars indicating significance
+  cat("\nCorrelation Matrix for", df_name, ":\n")
+  print(cor_df)
+}
+```
+
+#PRELIMINARY ANALYSIS
+```{r}
+# how many kids only recalled something from ep 1?
+total_rows <- nrow(kdf)  # Get the total number of rows
+
+# number of rows where scene_number is NOT equal to zero ep 2 but IS equal to zero ep 1
+count_nonzero_ep2 <- sum(kdf$scene_number != 0 & kdf$scene_number1 == 0)  
+proportion_nonzero_ep2 <- count_nonzero_ep2 / total_rows  # proportion
+
+# number of rows where scene_number is NOT equal to zero ep 1 but IS equal to zero ep 2
+count_nonzero_ep1 <- sum(kdf$scene_number1 != 0 & kdf$scene_number == 0) 
+proportion_nonzero_ep1 <- count_nonzero_ep1 / total_rows  # proportion
+
+# number of rows where scene_number is NOT equal to zero both eps
+count_nonzero <- sum(kdf$scene_number1 != 0 & kdf$scene_number != 0) 
+proportion_count_nonzer <- count_nonzero / total_rows  # proportion
+
+# number of rows where scene_number IS equal to zero both eps
+count_zero <- sum(kdf$scene_number1 == 0 & kdf$scene_number == 0)  
+proportion_count_zer <- count_zero / total_rows # proportion
+
+cat("Ep 2 only:", proportion_nonzero_ep2, "\n")
+cat("Ep 1 only:", proportion_nonzero_ep1, "\n")
+cat("Both Eps:", proportion_count_nonzer, "\n")
+cat("No scene recall:", proportion_count_zer, "\n")
+
+#number of kids who said nothing:
+cat("number of kids who said nothing:", count_zero)
+
+# data frame for kids who said nothing - all are younger kids (ages 4-5; group2 = YK)
+zerodf <- kdf[which(kdf$scene_number1 == 0 & kdf$scene_number == 0 & kdf$scene_number == 0 & kdf$scene_number1 == 0), ]
+
+```
+# plot recall by episode in kids
+```{r}
+# plot the proportions from above
+
+# Create a data frame with the proportions of kids who mentioned each ep
+propdf <- data.frame(values = c(proportion_nonzero_ep2, proportion_nonzero_ep1, proportion_count_nonzer, proportion_count_zer))
+
+# Create a bar plot
+barcolors <- c("mediumpurple1","mediumpurple3","purple4","mediumpurple4")
+
+ggplot(propdf, aes(x = seq_along(values), y = values, fill = factor(seq_along(values)))) +
+  geom_bar(stat = "identity", width = .5,color = "black", linewidth =.5)+
+  scale_x_discrete(limits=c("proportion_nonzero_ep2","proportion_nonzero_ep1","proportion_count_nonzer","proportion_count_zer"), 
+                   labels=c("Only Ep. 2","Only Ep. 1","Both Eps.","No Recall")) +
+  scale_fill_manual(values=barcolors) +
+    scale_y_continuous(expand = c(0, 0))+
+  ylab("Proportion of Children") + xlab("") +
+  plot_theme
+```
+
+#AGE GROUP DIFFERENCES IN FREE RECALL
+```{r}
+# Models with age predicting number of scenes recalled, controlling for verbal skills (KBIT-II) and spatial WM (CANTAB)
+
+cat("Adult number scenes recalled:", mean(adf$scene_number))
+cat("Kid number scenes recalled:", mean(kdf$scene_number))
+
+#scenes by age group
+model1 <- lm(scene_number ~ group, data=df)
+#view model summary
+summary(model1)
+
+# plot adults vs. kids
+ggplot(df, aes(x=group, y=scene_number, fill=group)) + 
+  plot_boxplot + plot_point +
+  ylim(0, 21) +
+  plot_KA_scale +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("Resid. of Num. Scenes Recalled") + xlab("") + plot_theme
+```
+
+```{r}
+# Models with age predicting number of details recalled, controlling for verbal skills (KBIT-II) and spatial WM (CANTAB)
+
+cat("Adult number details recalled:", mean(adf$detail_number))
+cat("Kid number details recalled:", mean(kdf$detail_number))
+
+#details by age
+model2 <- lm(detail_number ~ group, data=df)
+#view model summary
+summary(model2)
+
+# plot adults vs. kids
+ggplot(df, aes(x=group, y=detail_number, fill=group)) + 
+  plot_boxplot + plot_point +
+  ylim(0, 70) +
+  plot_KA_scale +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("Number of Details Recalled") + xlab("") +
+  plot_theme
+```
+
+```{r}
+# Number of scenes recalled, by age, in kids 
+
+#scenes by continuous age kids 
+model4 <- lm(scene_number ~ age_cont, data=kdf)
+#view model summary
+summary(model4)
+
+# plot by continuous age
+ggplot(kdf, aes(x=age_cont, y=scene_number)) + 
+  geom_point(size=3, color="purple3",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="purple3", fill="purple3", alpha=0.2) +
+xlab("Continuous Age") + ylab("Number of Scenes Recalled") + 
+  plot_theme
+```
+
+```{r}
+# Number of details recalled, by age, in kids  
+
+#details by continuous age kids
+model6 <- lm(detail_number ~ age_cont, data=kdf)
+#view model summary
+summary(model6)
+
+# plot by continuous age
+ggplot(kdf, aes(x=age_cont, y=detail_number)) + 
+  geom_point(size=3, color="purple3",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="purple3",fill="purple3", alpha=0.3) +
+xlab("Continuous Age") + ylab("Number of Details Recalled") + 
+  plot_theme
+```
+
+#***[SEE SCRIPT "two_lines_function.Rmd" for two-lines analysis of age x details in kids]***
+
+# two-lines plot 
+```{r}  
+
+# Subset the data for the two ranges
+subset1 <- subset(kdf, age_cont >= 4 & age_cont <= 5.469)
+subset2 <- subset(kdf, age_cont >= 5.47 & age_cont <= 8)
+
+# Plotting
+ggplot(kdf, aes(x = age_cont, y = detail_number)) + 
+  geom_point(size = 3, color = "purple3", alpha = 0.8) +
+  geom_smooth(data = subset1, method = "lm", se = TRUE, color = "purple3", fill = "purple3", alpha = 0.2) +
+  geom_smooth(data = subset2, method = "lm", se = TRUE, color = "purple3", fill = "purple3", alpha = 0.2)+ 
+  xlab("Continuous Age") + ylab("Number of Details Recalled") + 
+  plot_theme
+```
+
+
+#SPECIFICITY AND TEMPORAL ORDER ACCURACY
+```{r}
+#kids vs adults on summary statements
+
+# create df with only pp who have at least one summary statement OR one detail recalled
+df_summ<-df[which(df$summary>0 | df$detail_number>0), ]
+
+# how does number of summary statements vary with age
+model1 <- lm(summary ~ group, data=df )
+summary(model1)
+
+# how does proportion of recall that is summary statements vary with age
+model1 <- lm(sum_prop ~ group, data=df_summ )
+summary(model1)
+
+# plot num. summ. statements by adults vs. kids
+ggplot(df, aes(x=group, y=summary, fill=group)) + 
+  plot_boxplot + plot_point +
+  ylim(0, 10) +
+  scale_x_discrete(limits=c("K","A"), 
+                   labels=c("Children","Adults")) +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("Number Summary Statements") + xlab("") +
+  plot_theme
+
+# plot prop. summ. statements by adults vs. kids
+ggplot(df_summ, aes(x=group, y=sum_prop, fill=group)) + 
+  plot_boxplot + plot_point +
+  ylim(0, 1) +
+  scale_x_discrete(limits=c("K","A"), 
+                   labels=c("Children","Adults")) +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("Prop. Summary Statements") + xlab("") +
+  plot_theme
+
+```
+
+```{r}
+#temporal order for scenes in adults vc. children
+
+# create a dataframe where only participants who recalled at least one scene are included
+
+df_scene<-df[which(df$scene_number>1.05), ]
+
+model <- lm(extTO_prop ~ group, data=df_scene )
+summary(model)
+
+# plot proportion of participants, by group, who recalled scenes in the correct order  
+ggplot(df_scene, aes(x=group, y=extTO_prop, fill=group)) + 
+  plot_boxplot + plot_point +
+  ylim(0.25, 1) +
+  scale_x_discrete(limits=c("K","A"), 
+                   labels=c("Children","Adults")) +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("Prop. Scenes in Correct Order") + xlab("") +
+  plot_theme
+
+```
+
+```{r}
+#forced-choice temporal order predicting free recall temporal order
+
+#only include pp who recalled at least 2 scenes
+df_to<-df[which(df$scene_number>1), ]
+#center the predictor since we'll be including an interaction term
+df_to$tempord_centered <- scale(df_to$tempord, center = TRUE, scale = FALSE)
+
+model_det_tempord <- lm(extTO_prop ~ tempord_centered + group + group*tempord_centered, data=df_to )
+summary(model_det_tempord)
+```
+
+# FORCED CHOICE VS FREE RECALL MEMORY
+```{r}
+# free recall detail predicted by forced-choice recognition and temporal order in all pp
+
+#center predictors since we'll be including an interaction term
+df$tempord_centered <- scale(df$tempord, center = TRUE, scale = FALSE)
+df$recog_centered <- scale(df$recog, center = TRUE, scale = FALSE)
+
+model_det_tempord <- lm(detail_number ~ tempord_centered + group + group*tempord_centered, data=df )
+summary(model_det_tempord)
+
+model_det_recog <- lm(detail_number ~ recog_centered + group + group*recog_centered, data=df )
+summary(model_det_recog)
+```
+
+```{r}
+# plot detail by tempord in all pp
+ggplot(df, aes(x=tempord, y=detail_number, color=factor(group,labels=c("Adults","Children")))) + 
+  geom_smooth(method = "lm", se = TRUE, linetype = "dashed", color = "black", alpha = 0.2) +  # Add the black dotted line fitted to all data
+  geom_jitter(aes(fill = factor(group, labels = c("Adults", "Children"))), shape = 21, color = "black", size = 4, alpha = 0.6) +
+  stat_smooth(aes(fill = factor(group, labels = c("Adults", "Children"))), method = "lm", se = TRUE, alpha = 0.15) +
+  scale_fill_manual(values = c("green4", "purple3")) +
+  scale_color_manual(values = c("green4", "purple3")) +
+      xlim(14,41)+
+      ylim(-2, 93) +
+      labs(title = "", x= "Forced-Choice Temporal Order", y="Number of Details Recalled",
+         color="Age Group", fill="Age Group") + 
+  theme_classic() + theme(text=element_text(size=20))
+
+# plot detail by recog in all pp
+ggplot(df, aes(x = recog, y = detail_number, color = factor(group, labels = c("Adults", "Children")))) + 
+  geom_smooth(method = "lm", se = TRUE, linetype = "dashed", color = "black", alpha = 0.2) +  # Add the black dotted line fitted to all data
+  geom_jitter(aes(fill = factor(group, labels = c("Adults", "Children"))), shape = 21, color = "black", size = 4, alpha = 0.6) +
+  stat_smooth(aes(fill = factor(group, labels = c("Adults", "Children"))), method = "lm", se = TRUE, alpha = 0.15) +
+  scale_fill_manual(values = c("green4", "purple3")) +
+  scale_color_manual(values = c("green4", "purple3")) +
+  xlim(6, 21) +
+  ylim(-2, 93) +
+  labs(title = "", x = "Forced-Choice Recognition", y = "Number of Details Recalled", color = "Age Group", fill = "Age Group") + 
+  theme_classic() +
+  theme(text = element_text(size = 20))
+
+```
+
+```{r}
+# free recall detail predicted by forced-choice recognition and temporal order in KIDS ONLY
+
+#center predictors in the kid df since we'll be including interaction terms
+kdf$recog_centered <- scale(kdf$recog, center = TRUE, scale = FALSE)
+kdf$tempord_centered <- scale(kdf$tempord, center = TRUE, scale = FALSE)
+kdf$age_centered <- scale(kdf$age_cont, center = TRUE, scale = FALSE)
+
+# recognition
+recogmodel<-lm(detail_number~recog_centered*age_centered, data=kdf)
+summary(recogmodel)
+# temporal order
+tempmodel<-lm(detail_number~tempord_centered*age_centered, data=kdf)
+summary(tempmodel)
+
+#plot recognition in kids only
+ggplot(kdf,aes(y=detail_number,x=recog,color=age_cont))+
+  #stat_smooth(method = "lm", se=TRUE, color = "black",alpha=.15)+
+  geom_point(position="dodge",size=4,alpha=.9)+
+  scale_color_gradient(low = "plum1", high = "purple4")+
+  labs(title = "", x= "Forced-Choice Recognition", y="Number of Details Recalled",
+         color="Age", fill="Age") +ylim(0,25)+
+            xlim(7,20)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text=element_text(size=15),legend.title=element_text(size=20)) 
+
+#plot temporal order in kids only
+ggplot(kdf,aes(y=detail_number,x=tempord,color=age_cont))+
+  #stat_smooth(method = "lm", se=TRUE, color = "black",alpha=.15)+
+  geom_point(position="dodge",size=4,alpha=.9)+
+  scale_color_gradient(low = "plum1", high = "purple4")+
+  labs(title = "", x= "Forced-Choice Temporal Order", y="Number of Details Recalled",
+         color="Age", fill="Age") +ylim(0,25)+
+            xlim(15,40)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text=element_text(size=15),legend.title=element_text(size=20)) 
+```
+
+#HIERARCHICAL ANALYSES
+
+#create df with complete cases for all variables
+```{r}
+#also create composite memory variable
+df$compmem<-(df$tempord+df$recog)/2
+#create df with only complete cases of event cog
+df1 <- df[complete.cases(df$scaledcorz_adultlike), ]
+#create df with only complete cases of event cog
+df1 <- df1[complete.cases(df1$kbit_raw), ]
+
+```
+
+# HLM testing added variance accounted for by compmem beyond age
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ group, data = df1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ group + compmem, data = df1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without, R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+# HLM testing added variance accounted for by event cognition beyond age
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ group, data = df1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ group + scaledcorz_adultlike, data = df1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without,R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+# HLM testing added variance accounted for by vebral skills beyond age
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ group, data = df1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ group + kbit_raw, data = df1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without,R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+
+#create df with complete cases for all variables KIDS ONLY
+```{r}
+#also create composite memory variable
+kdf$compmem<-(kdf$tempord+kdf$recog)/2
+#create df with only complete cases of event cog
+kdf1 <- kdf[complete.cases(kdf$scaledcorz_adultlike), ]
+#create df with only complete cases of event cog
+kdf1 <- kdf1[complete.cases(kdf1$kbit_raw), ]
+
+```
+
+# HLM testing added variance accounted for by compmem beyond age KIDS ONLY
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ age_cont, data = kdf1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ age_cont + compmem, data = kdf1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without, R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+# HLM testing added variance accounted for by event cognition beyond age KIDS ONLY
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ age_cont, data = kdf1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ age_cont + scaledcorz_adultlike, data = kdf1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without,R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+# HLM testing added variance accounted for by vebral skills beyond age KIDS ONLY
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ age_cont, data = kdf1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ age_cont + kbit_raw, data = kdf1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without,R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+# HLM testing added variance accounted for by age beyond verbal skills KIDS ONLY
+```{r}
+# Model 1: Predicting recall using recognition and temporal order
+model1 <- lm(detail_number ~ kbit_raw, data = kdf1)
+summary(model1)
+
+# Model 2: Adding age as an additional predictor
+model2 <- lm(detail_number ~ kbit_raw + age_cont, data = kdf1)
+summary(model2)
+
+
+cat("\n")
+r_squared_noage <- summary(model1)$r.squared
+r_squared_age <- summary(model2)$r.squared
+cat("Model without,R-squared =", r_squared_noage, "\n")
+cat("Model WITH, R-squared =", r_squared_age, "\n")
+if (r_squared_noage > r_squared_age) {
+  cat("The original model is a better predictor with R-squared =", r_squared_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with R-squared =", r_squared_age, "\n")
+}
+cat("\n")
+
+rss_noage <- sum(residuals(model1)^2)
+rss_age <- sum(residuals(model2)^2)
+cat("Model without, RSS =", rss_noage, "\n")
+cat("Model WITH, RSS =", rss_age, "\n")
+if (rss_noage < rss_age) {
+  cat("The original model is a better predictor with RSS =", rss_noage, "\n")
+} else {
+  cat("The complex model is a better predictor with RSS =", rss_age, "\n")
+}
+cat("\n")
+
+anova_result <- anova(model1, model2)
+p_value <- anova_result[2, "Pr(>F)"]
+
+#cat("F-stat for ANOVA model comparison:", F_statistic, "\n")
+cat("anova p-value:", p_value, "\n")
+```
+
+
+#plot: verbal x age group in both kids & adults
+```{r}
+# plot raw kbit scores
+ggplot(df1, aes(x=group, y=kbit_raw, fill=group)) + 
+  plot_boxplot + plot_point +
+  #ylim(0, 70) +
+  plot_KA_scale +
+  scale_fill_manual(values=c("green4","purple3")) +
+  ylab("KBIT score") + xlab("") +
+  plot_theme
+```
+
+# plot: verbal x age group x details in full dataset
+```{r}
+df1$kbit_raw_centered <- scale(df1$kbit_raw, center = TRUE, scale = FALSE)
+
+model1 <- lm(detail_number ~ group + kbit_raw_centered + kbit_raw_centered*group, data = df1)
+summary(model1)
+
+ggplot(df1, aes(x=kbit_raw, y=detail_number, color=factor(group,labels=c("Adults","Children")))) + 
+  geom_jitter(aes(fill = factor(group, labels = c("Adults", "Children"))), shape = 21, color = "black", size = 4, alpha = 0.6) +
+  #geom_smooth(method = "lm", se = TRUE, linetype = "dashed", color = "black", alpha = 0.3) +  # Add the black dotted line fitted to all data
+  stat_smooth(aes(fill = factor(group, labels = c("Adults", "Children"))), method = "lm", se = TRUE, alpha = 0.2) +
+  scale_fill_manual(values = c("green4", "purple3")) +
+  scale_color_manual(values = c("green4", "purple3")) +
+      #xlim(15,40)+
+      labs(title = "", x= "Verbal Skills", y="Number of Details Recalled",
+         color="Age Group", fill="Age Group") + 
+  theme_classic() + theme(text=element_text(size=20))
+```
+
+# plot: verbal x details and age x verbal in ADULTS only
+```{r}
+#also create composite memory variable
+adf$compmem<-(adf$tempord+adf$recog)/2
+#create df with only complete cases of event cog
+adf1 <- adf[complete.cases(adf$scaledcorz_adultlike), ]
+#create df with only complete cases of event cog
+adf1 <- adf1[complete.cases(adf1$kbit_raw), ]
+adf1 <- subset(adf1, age < 25)
+
+model1 <- lm(detail_number ~ kbit_raw, data = adf)
+summary(model1)
+
+model1 <- lm(kbit_raw ~ age, data = adf1)
+summary(model1)
+
+ggplot(adf1, aes(x=kbit_raw, y=detail_number)) + 
+  geom_point(size=3, color="green4",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="green4",fill="green4", alpha=0.15) +
+xlab("Adults' Verbal Skills") + ylab("Number of Details Recalled")+
+   theme_classic() + theme(text=element_text(size=20))
+
+ggplot(adf1, aes(x=age, y=kbit_raw)) + 
+  geom_point(size=3, color="green4",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="green4",fill="green4", alpha=0.15) +
+xlab("Age") + ylab("Adults' Verbal Skills")+
+   theme_classic() + theme(text=element_text(size=20))
+```
+
+# plot: verbal x details and age x verbal in KIDS only
+```{r}
+kdf1$kbit_raw_centered <- scale(kdf1$kbit_raw, center = TRUE, scale = FALSE)
+
+model1 <- lm(detail_number ~ kbit_raw_centered, data = kdf1)
+summary(model1)
+
+ggplot(kdf1, aes(x=kbit_raw, y=detail_number)) + 
+  geom_point(size=3, color="purple3",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="purple3",fill="purple3", alpha=0.15) +
+xlab("Children's Verbal Skills") + ylab("Number of Details Recalled")+
+   theme_classic() + theme(text=element_text(size=20))
+
+model1 <- lm(kbit_raw ~ age_cont, data = kdf)
+summary(model1)
+
+ggplot(kdf1, aes(x=age_cont, y=kbit_raw)) + 
+  geom_point(size=3, color="purple3",alpha=0.8)+
+  geom_smooth(method=lm, se=TRUE, color="purple3",fill="purple3", alpha=0.15) +
+xlab("Age") + ylab("Children's Verbal Skills")+
+   theme_classic() + theme(text=element_text(size=20))
+```

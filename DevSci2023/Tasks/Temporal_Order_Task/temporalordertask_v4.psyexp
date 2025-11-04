@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" ?>
+<PsychoPy2experiment encoding="utf-8" version="2021.2.2">
+  <Settings>
+    <Param name="Audio latency priority" updates="None" val="use prefs" valType="str"/>
+    <Param name="Audio lib" updates="None" val="use prefs" valType="str"/>
+    <Param name="Completed URL" updates="None" val="" valType="str"/>
+    <Param name="Data file delimiter" updates="None" val="auto" valType="str"/>
+    <Param name="Data filename" updates="None" val="u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])" valType="code"/>
+    <Param name="Enable Escape" updates="None" val="True" valType="bool"/>
+    <Param name="Experiment info" updates="None" val="{'participant':'', 'session':'001'}" valType="code"/>
+    <Param name="Force stereo" updates="None" val="True" valType="bool"/>
+    <Param name="Full-screen window" updates="None" val="True" valType="bool"/>
+    <Param name="HTML path" updates="None" val="" valType="str"/>
+    <Param name="Incomplete URL" updates="None" val="" valType="str"/>
+    <Param name="Monitor" updates="None" val="testMonitor" valType="str"/>
+    <Param name="Resources" updates="None" val="[]" valType="fileList"/>
+    <Param name="Save csv file" updates="None" val="False" valType="bool"/>
+    <Param name="Save excel file" updates="None" val="False" valType="bool"/>
+    <Param name="Save hdf5 file" updates="None" val="False" valType="bool"/>
+    <Param name="Save log file" updates="None" val="True" valType="bool"/>
+    <Param name="Save psydat file" updates="None" val="True" valType="bool"/>
+    <Param name="Save wide csv file" updates="None" val="True" valType="bool"/>
+    <Param name="Screen" updates="None" val="1" valType="num"/>
+    <Param name="Show info dlg" updates="None" val="True" valType="bool"/>
+    <Param name="Show mouse" updates="None" val="False" valType="bool"/>
+    <Param name="Units" updates="None" val="height" valType="str"/>
+    <Param name="Use version" updates="None" val="" valType="str"/>
+    <Param name="Window size (pixels)" updates="None" val="(1024, 768)" valType="code"/>
+    <Param name="blendMode" updates="None" val="avg" valType="str"/>
+    <Param name="color" updates="None" val="$[0,0,0]" valType="str"/>
+    <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
+    <Param name="elAddress" updates="None" val="100.1.1.1" valType="str"/>
+    <Param name="elDataFiltering" updates="None" val="FILTER_LEVEL_2" valType="str"/>
+    <Param name="elLiveFiltering" updates="None" val="FILTER_LEVEL_OFF" valType="str"/>
+    <Param name="elModel" updates="None" val="EYELINK 1000 DESKTOP" valType="str"/>
+    <Param name="elPupilAlgorithm" updates="None" val="ELLIPSE_FIT" valType="str"/>
+    <Param name="elPupilMeasure" updates="None" val="PUPIL_AREA" valType="str"/>
+    <Param name="elSampleRate" updates="None" val="1000" valType="num"/>
+    <Param name="elSimMode" updates="None" val="False" valType="bool"/>
+    <Param name="elTrackEyes" updates="None" val="RIGHT_EYE" valType="str"/>
+    <Param name="elTrackingMode" updates="None" val="PUPIL_CR_TRACKING" valType="str"/>
+    <Param name="expName" updates="None" val="KJTemporalOrderTask" valType="str"/>
+    <Param name="exportHTML" updates="None" val="on Sync" valType="str"/>
+    <Param name="eyetracker" updates="None" val="None" valType="str"/>
+    <Param name="gpAddress" updates="None" val="127.0.0.1" valType="str"/>
+    <Param name="gpPort" updates="None" val="4242" valType="num"/>
+    <Param name="logging level" updates="None" val="exp" valType="code"/>
+    <Param name="mgBlink" updates="None" val="MIDDLE_BUTTON" valType="list"/>
+    <Param name="mgMove" updates="None" val="CONTINUOUS" valType="str"/>
+    <Param name="mgSaccade" updates="None" val="0.5" valType="num"/>
+    <Param name="tbLicenseFile" updates="None" val="" valType="str"/>
+    <Param name="tbModel" updates="None" val="" valType="str"/>
+    <Param name="tbSampleRate" updates="None" val="60" valType="num"/>
+    <Param name="tbSerialNo" updates="None" val="" valType="str"/>
+  </Settings>
+  <Routines>
+    <Routine name="Intro">
+      <TextComponent name="introtext">
+        <Param name="color" updates="constant" val="black" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.05" valType="code"/>
+        <Param name="name" updates="None" val="introtext" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(0, 0)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="constant" val="This task will show you pairs of screen shots with captions depicting events from All Hail King Julien, episode 2. Your job is to pick which event came first. &amp;#10;Press ‘1’ on the keyboard to choose the top image and ‘2’ to choose the bottom image.&amp;#10;&amp;#10;Press Enter/Return to go to the next screen." valType="extendedStr"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="1.5" valType="code"/>
+      </TextComponent>
+      <KeyboardComponent name="introresp">
+        <Param name="allowedKeys" updates="constant" val="'return'" valType="code"/>
+        <Param name="correctAns" updates="constant" val="" valType="str"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="discard previous" updates="constant" val="True" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="forceEndRoutine" updates="constant" val="True" valType="bool"/>
+        <Param name="name" updates="None" val="introresp" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="store" updates="constant" val="nothing" valType="str"/>
+        <Param name="storeCorrect" updates="constant" val="False" valType="bool"/>
+        <Param name="syncScreenRefresh" updates="constant" val="True" valType="bool"/>
+      </KeyboardComponent>
+    </Routine>
+    <Routine name="PresentImages">
+      <ImageComponent name="imagetop">
+        <Param name="color" updates="constant" val="$[1,1,1]" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flipHoriz" updates="constant" val="False" valType="bool"/>
+        <Param name="flipVert" updates="constant" val="False" valType="bool"/>
+        <Param name="image" updates="set every repeat" val="$image1" valType="str"/>
+        <Param name="interpolate" updates="constant" val="linear" valType="str"/>
+        <Param name="mask" updates="constant" val="None" valType="str"/>
+        <Param name="name" updates="None" val="imagetop" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(0.07, .14)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="size" updates="constant" val="(0.5024, 0.28504)" valType="code"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="texture resolution" updates="constant" val="512" valType="code"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+      </ImageComponent>
+      <ImageComponent name="imagebottom">
+        <Param name="color" updates="constant" val="$[1,1,1]" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flipHoriz" updates="constant" val="False" valType="bool"/>
+        <Param name="flipVert" updates="constant" val="False" valType="bool"/>
+        <Param name="image" updates="set every repeat" val="$image2" valType="str"/>
+        <Param name="interpolate" updates="constant" val="linear" valType="str"/>
+        <Param name="mask" updates="constant" val="None" valType="str"/>
+        <Param name="name" updates="None" val="imagebottom" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(0.07, -0.19)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="size" updates="constant" val="(0.5024, 0.28504)" valType="code"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="texture resolution" updates="constant" val="512" valType="code"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+      </ImageComponent>
+      <TextComponent name="tasktext">
+        <Param name="color" updates="constant" val="black" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.05" valType="code"/>
+        <Param name="name" updates="None" val="tasktext" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(0, .42)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="constant" val="Which one of these happened first?" valType="extendedStr"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="" valType="code"/>
+      </TextComponent>
+      <KeyboardComponent name="response">
+        <Param name="allowedKeys" updates="constant" val="'1','2'" valType="code"/>
+        <Param name="correctAns" updates="constant" val="$correct" valType="str"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="discard previous" updates="constant" val="True" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="forceEndRoutine" updates="constant" val="True" valType="bool"/>
+        <Param name="name" updates="None" val="response" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="store" updates="constant" val="last key" valType="str"/>
+        <Param name="storeCorrect" updates="constant" val="True" valType="bool"/>
+        <Param name="syncScreenRefresh" updates="constant" val="True" valType="bool"/>
+      </KeyboardComponent>
+      <TextComponent name="text1">
+        <Param name="color" updates="constant" val="black" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.1" valType="code"/>
+        <Param name="name" updates="None" val="text1" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(-.275, .175)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="constant" val="1" valType="extendedStr"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="" valType="code"/>
+      </TextComponent>
+      <TextComponent name="text2">
+        <Param name="color" updates="constant" val="black" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.1" valType="code"/>
+        <Param name="name" updates="None" val="text2" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(-.275, -.2)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="constant" val="2" valType="extendedStr"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="" valType="code"/>
+      </TextComponent>
+      <TextComponent name="toptext">
+        <Param name="color" updates="constant" val="black" valType="color"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="None" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.025" valType="num"/>
+        <Param name="name" updates="None" val="toptext" valType="code"/>
+        <Param name="opacity" updates="constant" val="" valType="num"/>
+        <Param name="ori" updates="constant" val="0" valType="num"/>
+        <Param name="pos" updates="constant" val="[0.07, .32]" valType="list"/>
+        <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="set every repeat" val="$image1caption" valType="str"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="" valType="num"/>
+      </TextComponent>
+      <TextComponent name="bottomtext">
+        <Param name="color" updates="constant" val="black" valType="color"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="None" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.025" valType="num"/>
+        <Param name="name" updates="None" val="bottomtext" valType="code"/>
+        <Param name="opacity" updates="constant" val="" valType="num"/>
+        <Param name="ori" updates="constant" val="0" valType="num"/>
+        <Param name="pos" updates="constant" val="[0.07, -.375]" valType="list"/>
+        <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="set every repeat" val="$image2caption" valType="str"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="" valType="num"/>
+      </TextComponent>
+    </Routine>
+    <Routine name="Exit">
+      <TextComponent name="exittext">
+        <Param name="color" updates="constant" val="black" valType="str"/>
+        <Param name="colorSpace" updates="constant" val="rgb" valType="str"/>
+        <Param name="contrast" updates="constant" val="1" valType="num"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="flip" updates="constant" val="" valType="str"/>
+        <Param name="font" updates="constant" val="Arial" valType="str"/>
+        <Param name="languageStyle" updates="None" val="LTR" valType="str"/>
+        <Param name="letterHeight" updates="constant" val="0.05" valType="code"/>
+        <Param name="name" updates="None" val="exittext" valType="code"/>
+        <Param name="opacity" updates="constant" val="1" valType="code"/>
+        <Param name="ori" updates="constant" val="0" valType="code"/>
+        <Param name="pos" updates="constant" val="(0, 0)" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
+        <Param name="text" updates="constant" val="Thanks for participating! You can tell the researcher you have finished." valType="extendedStr"/>
+        <Param name="units" updates="None" val="from exp settings" valType="str"/>
+        <Param name="wrapWidth" updates="constant" val="1.5" valType="code"/>
+      </TextComponent>
+      <KeyboardComponent name="exitresp">
+        <Param name="allowedKeys" updates="constant" val="'return'" valType="code"/>
+        <Param name="correctAns" updates="constant" val="" valType="str"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="discard previous" updates="constant" val="True" valType="bool"/>
+        <Param name="durationEstim" updates="None" val="" valType="code"/>
+        <Param name="forceEndRoutine" updates="constant" val="True" valType="bool"/>
+        <Param name="name" updates="None" val="exitresp" valType="code"/>
+        <Param name="saveStartStop" updates="None" val="False" valType="bool"/>
+        <Param name="startEstim" updates="None" val="" valType="code"/>
+        <Param name="startType" updates="None" val="time (s)" valType="str"/>
+        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
+        <Param name="stopVal" updates="constant" val="" valType="code"/>
+        <Param name="store" updates="constant" val="nothing" valType="str"/>
+        <Param name="storeCorrect" updates="constant" val="False" valType="bool"/>
+        <Param name="syncScreenRefresh" updates="constant" val="True" valType="bool"/>
+      </KeyboardComponent>
+    </Routine>
+  </Routines>
+  <Flow>
+    <Routine name="Intro"/>
+    <LoopInitiator loopType="TrialHandler" name="trials">
+      <Param name="Selected rows" updates="None" val="" valType="str"/>
+      <Param name="conditions" updates="None" val="[OrderedDict([('type', 'bb'), ('image1', 'Boundary13b'), ('image1cat', 'b'), ('image1order', 53), ('image1caption', &quot;Eating kumquats after King Julian's bad ratings from baby kissing&quot;), ('image2', 'Boundary7b'), ('image2cat', 'b'), ('image2order', 29), ('image2caption', 'Clover tells King Julian she thinks there is a conspiracy'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Within18a'), ('image1cat', 'w'), ('image1order', 70), ('image1caption', 'Hector gets a free mango'), ('image2', 'Within6a'), ('image2cat', 'w'), ('image2order', 22), ('image2caption', 'Maurice creates the kumquat-o-meter with the fruit on the stick'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Within4b'), ('image1cat', 'w'), ('image1order', 15), ('image1caption', 'King Julian finds out only 99% of the lemurs like him'), ('image2', 'Within8a'), ('image2cat', 'w'), ('image2order', 30), ('image2caption', 'Maurice and Clover argue about the best way to find the hater'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Boundary4a'), ('image1cat', 'b'), ('image1order', 16), ('image1caption', 'Clover tells King Julian to make it illegal not to like him'), ('image2', 'Boundary1a'), ('image2cat', 'b'), ('image2order', 4), ('image2caption', 'Clover walks into the crowd as Julian is announced king'), ('correct', 2)]), OrderedDict([('type', 'bb'), ('image1', 'Within17a'), ('image1cat', 'w'), ('image1order', 66), ('image1caption', 'Everyone finds Clover asleep on her investigation boards'), ('image2', 'Within19b'), ('image2cat', 'w'), ('image2order', 75), ('image2caption', 'King Julian saves a baby from the falling tree'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Within7a'), ('image1cat', 'w'), ('image1order', 26), ('image1caption', 'King Julian grabs Masikura the lizard to try to hit Gigi with her tongue'), ('image2', 'Within12a'), ('image2cat', 'w'), ('image2order', 46), ('image2caption', &quot;Clover says Hector isn't the hater, but she thinks there's a conspiracy&quot;), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Boundary6b'), ('image1cat', 'b'), ('image1order', 25), ('image1caption', &quot;Julian calls Masikura to read Gigi's mind&quot;), ('image2', 'Within1a'), ('image2cat', 'w'), ('image2order', 2), ('image2caption', 'Maurice gets on stage in front of all the lemurs in the kingdom'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Within17b'), ('image1cat', 'w'), ('image1order', 67), ('image1caption', 'Everyone thinks Clover has figured out who the hater is'), ('image2', 'Boundary19a'), ('image2cat', 'b'), ('image2order', 76), ('image2caption', 'Celebrating King Julian saving the baby from the falling tree'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Boundary5b'), ('image1cat', 'b'), ('image1order', 21), ('image1caption', 'King Julian cries that having a hater is the worst thing ever'), ('image2', 'Boundary17b'), ('image2cat', 'b'), ('image2order', 69), ('image2caption', 'King Julian arrives to hand out free mangoes'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Within9a'), ('image1cat', 'w'), ('image1order', 34), ('image1caption', 'King Julian shows up at the lemur interview in a fake moustache'), ('image2', 'Boundary16a'), ('image2cat', 'b'), ('image2order', 64), ('image2caption', 'Clover needs more evidence to figure out who the hater is'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Within15a'), ('image1cat', 'w'), ('image1order', 58), ('image1caption', 'King Julian says how much everyone liked him when he was little'), ('image2', 'Within12b'), ('image2cat', 'w'), ('image2order', 47), ('image2caption', 'Maurice says to wait for everyone to forget; Gigi says to try something new'), ('correct', 2)]), OrderedDict([('type', 'bb'), ('image1', 'Within11a'), ('image1cat', 'w'), ('image1order', 42), ('image1caption', &quot;Maurice takes off kumquats after Julian blows up Hector's house&quot;), ('image2', 'Within13a'), ('image2cat', 'w'), ('image2order', 50), ('image2caption', &quot;King Julian tells the lemurs he's there to kiss their babies&quot;), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'BoundaryEnd'), ('image1cat', 'b'), ('image1order', 80), ('image1caption', &quot;Clover is mad King Julian doesn't care about her investigation anymore&quot;), ('image2', 'Within3b'), ('image2cat', 'w'), ('image2order', 11), ('image2caption', 'King Julian talks about how great the new toilet boat is'), ('correct', 2)]), OrderedDict([('type', 'bb'), ('image1', 'Within3a'), ('image1cat', 'w'), ('image1order', 10), ('image1caption', 'King Julian hits a soda bottle on the toilet boat'), ('image2', 'Boundary11b'), ('image2cat', 'b'), ('image2order', 45), ('image2caption', 'King Julian is sad his ratings are getting worse instead of better'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary3a'), ('image1cat', 'b'), ('image1order', 12), ('image1caption', 'Willie is pushed off to sea on the toilet boat'), ('image2', 'Boundary15a'), ('image2cat', 'b'), ('image2order', 60), ('image2caption', 'King Julian thanks the skelelon for its &quot;help&quot;'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Within19a'), ('image1cat', 'w'), ('image1order', 74), ('image1caption', 'Gigi realizes the tree is about to fall down'), ('image2', 'Boundary8b'), ('image2cat', 'b'), ('image2order', 33), ('image2caption', 'Maurice interviews a group of lemurs'), ('correct', 2)]), OrderedDict([('type', 'bb'), ('image1', 'Boundary3b'), ('image1cat', 'b'), ('image1order', 13), ('image1caption', 'Julian is carried away after being announces as the new king'), ('image2', 'Boundary14a'), ('image2cat', 'b'), ('image2order', 56), ('image2caption', 'King Julian only gets joy anymore from the lemur eating the kumquats'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Within9b'), ('image1cat', 'w'), ('image1order', 35), ('image1caption', 'King Julian tries to trick the lemurs into telling him about himself '), ('image2', 'Within6b'), ('image2cat', 'w'), ('image2order', 23), ('image2caption', 'King Julian begs Gigi to tell him who his hater is'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary7a'), ('image1cat', 'b'), ('image1order', 28), ('image1caption', &quot;Clover tells King Julian he's safe but asks for a meeting with him&quot;), ('image2', 'Boundary16b'), ('image2cat', 'b'), ('image2order', 65), ('image2caption', 'King Julian explains his idea to give away free mangoes'), ('correct', 1)]), OrderedDict([('type', 'bb'), ('image1', 'Boundary12a'), ('image1cat', 'b'), ('image1order', 48), ('image1caption', 'King Julian makes a plan to kiss all the baby lemurs'), ('image2', 'Within20b'), ('image2cat', 'w'), ('image2order', 79), ('image2caption', &quot;King Julian tells Clover he doesn't care about the investigation anymore&quot;), ('correct', 1)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary13a'), ('image1cat', 'b'), ('image1order', 52), ('image1caption', 'The lemurs are mad King Julian kicked Mort away'), ('image2', 'Boundary10b'), ('image2cat', 'b'), ('image2order', 41), ('image2caption', 'King Julian is excited because he thinks he knows Hector is his hater'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary9a'), ('image1cat', 'b'), ('image1order', 36), ('image1caption', 'Clover sets up the boards and papers for her investigation'), ('image2', 'Within14b'), ('image2cat', 'w'), ('image2order', 55), ('image2caption', 'Maurice asks King Julian why the lemur has to eat all the kumquats'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Within1b'), ('image1cat', 'w'), ('image1order', 3), ('image1caption', 'Maurice gives a speech about the new King Julian'), ('image2', 'Within7b'), ('image2cat', 'w'), ('image2order', 27), ('image2caption', &quot;King Julian almost hits Gigi with Masikura the lizard's tongue&quot;), ('correct', 1)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary19b'), ('image1cat', 'b'), ('image1order', 77), ('image1caption', 'Maurice adds kumquats because all the lemurs like King Julian now'), ('image2', 'Boundary18a'), ('image2cat', 'b'), ('image2order', 72), ('image2caption', 'Willie gets a free mango'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Within18b'), ('image1cat', 'w'), ('image1order', 71), ('image1caption', 'King Julian throws a mango for Mort to catch'), ('image2', 'Within13b'), ('image2cat', 'w'), ('image2order', 51), ('image2caption', 'King Julian accidentally kisses Mort'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary18b'), ('image1cat', 'b'), ('image1order', 73), ('image1caption', 'King Julian runs out of mangoes to give away'), ('image2', 'Within5b'), ('image2cat', 'w'), ('image2order', 19), ('image2caption', 'Maurice tells King Julian to focus on the good things, not the hater'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary1b'), ('image1cat', 'b'), ('image1order', 5), ('image1caption', 'Clover takes a message on her pretend earphone'), ('image2', 'Within4a'), ('image2cat', 'w'), ('image2order', 14), ('image2caption', 'Gigi tells King Julian the news for the day'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary8a'), ('image1cat', 'b'), ('image1order', 32), ('image1caption', 'Julian and Maurice decide to interview a group of lemurs'), ('image2', 'Boundary17a'), ('image2cat', 'b'), ('image2order', 68), ('image2caption', 'Clover tries to jump out the window to finish her investigation'), ('correct', 1)]), OrderedDict([('type', 'ww'), ('image1', 'Within5a'), ('image1cat', 'w'), ('image1order', 18), ('image1caption', 'Clover says the one hater could be the start of a revolution'), ('image2', 'Boundary2b'), ('image2cat', 'b'), ('image2order', 9), ('image2caption', 'King Julian shows all the lemurs the new toilet boat'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Within8b'), ('image1cat', 'w'), ('image1order', 31), ('image1caption', &quot;King Julian does eenie meenie minie moe and picks Clover's plan&quot;), ('image2', 'Within16b'), ('image2cat', 'w'), ('image2order', 63), ('image2caption', &quot;Clover thinks she might know who King Julian's hater is&quot;), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary10a'), ('image1cat', 'b'), ('image1order', 40), ('image1caption', &quot;King Julian blows up Hector's house&quot;), ('image2', 'Boundary6a'), ('image2cat', 'b'), ('image2order', 24), ('image2caption', &quot;King Julian pretends he doesn't care about the hater&quot;), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary11a'), ('image1cat', 'b'), ('image1order', 44), ('image1caption', &quot;King Julian learns his ratings are worse after blowing up Hector's house &quot;), ('image2', 'Within2b'), ('image2cat', 'w'), ('image2order', 7), ('image2caption', 'Maurice says all the people seem to like the new King Julian'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Within15b'), ('image1cat', 'w'), ('image1order', 59), ('image1caption', &quot;King Julian asks the skeleton if there is anyone who doesn't like mangoes&quot;), ('image2', 'Within2a'), ('image2cat', 'w'), ('image2order', 6), ('image2caption', 'Julian is announced as the new king'), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Boundary5a'), ('image1cat', 'b'), ('image1order', 20), ('image1caption', 'Willie yells about sharks from the boat off in the distance'), ('image2', 'Boundary12b'), ('image2cat', 'b'), ('image2order', 49), ('image2caption', 'King Julian announces he will be kissing all the babies'), ('correct', 1)]), OrderedDict([('type', 'ww'), ('image1', 'Within20a'), ('image1cat', 'w'), ('image1order', 78), ('image1caption', 'King Julian says he learned his lesson now that everyone likes him'), ('image2', 'Within10b'), ('image2cat', 'w'), ('image2order', 39), ('image2caption', &quot;Hector days he's been working on his matchstick tower for a year&quot;), ('correct', 2)]), OrderedDict([('type', 'bw'), ('image1', 'Within10a'), ('image1cat', 'w'), ('image1order', 38), ('image1caption', &quot;Hector tells King Julian he's fine and tries to get him to leave&quot;), ('image2', 'Within14a'), ('image2cat', 'w'), ('image2order', 54), ('image2caption', 'Feeling sick from eating kumquats after King Julian kisses the babies'), ('correct', 1)]), OrderedDict([('type', 'ww'), ('image1', 'Boundary4b'), ('image1cat', 'b'), ('image1order', 17), ('image1caption', 'Maurice says making it illegal to not like King Julian is a bad idea'), ('image2', 'Boundary2a'), ('image2cat', 'b'), ('image2order', 8), ('image2caption', 'King Julian pulls down the curtain in front of the new boat'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'Within11b'), ('image1cat', 'w'), ('image1order', 43), ('image1caption', &quot;Looking for kumquats taken off after Hector's house blows up&quot;), ('image2', 'Boundary15b'), ('image2cat', 'b'), ('image2order', 61), ('image2caption', 'Clover tries to decide which lemur is the hater between a few suspects'), ('correct', 1)]), OrderedDict([('type', 'bw'), ('image1', 'Within16a'), ('image1cat', 'w'), ('image1order', 62), ('image1caption', 'Clover looks at her evidence to try to figure out who the hater is'), ('image2', 'Boundary14b'), ('image2cat', 'b'), ('image2order', 57), ('image2caption', 'King Julian is alone in his plane at night after the baby kissing event'), ('correct', 2)]), OrderedDict([('type', 'ww'), ('image1', 'BoundaryStart'), ('image1cat', 'b'), ('image1order', 1), ('image1caption', 'The ship yard before Julian is announced as the new king'), ('image2', 'Boundary9b'), ('image2cat', 'b'), ('image2order', 37), ('image2caption', &quot;King Julian enters Hector's house and sees a tower of matches&quot;), ('correct', 1)])]" valType="str"/>
+      <Param name="conditionsFile" updates="None" val="temporalorder_v4.csv" valType="str"/>
+      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
+      <Param name="isTrials" updates="None" val="True" valType="bool"/>
+      <Param name="loopType" updates="None" val="random" valType="str"/>
+      <Param name="nReps" updates="None" val="1" valType="code"/>
+      <Param name="name" updates="None" val="trials" valType="code"/>
+      <Param name="random seed" updates="None" val="" valType="code"/>
+    </LoopInitiator>
+    <Routine name="PresentImages"/>
+    <LoopTerminator name="trials"/>
+    <Routine name="Exit"/>
+  </Flow>
+</PsychoPy2experiment>

@@ -1,0 +1,361 @@
+---
+title: "LandL Data Analysis"
+output: html_notebook
+---
+
+```{r}
+library("haven")
+library("nloptr")
+library("effects")
+library("psych")
+library("tidyr")
+library("dplyr")
+library("rstatix")
+library("emmeans")
+library("interactions")
+```
+
+```{r}
+setwd("/Users/susanbenear/Google Drive/My Drive/Dissertation/Behavioral_Tasks_Data/Data/Data_Analysis/")
+dfall<-read.csv("memdataforanalysis_0723.csv")
+df<-dfall[which(dfall$group=='A'), ]
+dfk<-dfall[which(dfall$group=='K'), ]
+dfok<-dfall[which(dfall$group2=='OK'), ]
+dfyk<-dfall[which(dfall$group2=='YK'), ]
+
+dfall<-dfall[!(is.na(dfall$scaledcorz_adultlike & dfall$kbit)),]
+df<-df[!(is.na(df$scaledcorz_adultlike & df$kbit)),]
+dfk<-dfk[!(is.na(dfk$scaledcorz_adultlike & dfk$kbit)),]
+dfok<-dfok[!(is.na(dfok$scaledcorz_adultlike & dfok$kbit)),]
+dfyk<-dfyk[!(is.na(dfyk$scaledcorz_adultlike & dfyk$kbit)),]
+```
+
+```{r}
+#DEMOGRAPHICS - BEHAVIORAL
+print('white:')
+sum(with(df,race == "W"))
+print('black:')
+sum(with(df,race == "B"))
+print('asian:')
+sum(with(df,race == "A"))
+print('ai/an:')
+sum(with(df,race == "I"))
+print('mixed:')
+sum(with(df,race == "M"))
+print('other:')
+sum(with(df,race == "O"))
+print('none reported:')
+sum(with(df,race == "N"))
+```
+
+```{r}
+#DEMOGRAPHICS - IMAGING
+setwd("/Users/susanbenear/Google Drive/My Drive/Dissertation/Imaging_Data/dataset_info/")
+dfi<-read.csv("demdata_allwithcompdata.csv")
+print('white:')
+sum(with(dfi,child_race == "W"))
+print('black:')
+sum(with(dfi,child_race == "B"))
+print('asian:')
+sum(with(dfi,child_race == "A"))
+print('mixed:')
+sum(with(dfi,child_race == "M"))
+
+setwd("/Users/slb671/Google Drive/My Drive/Dissertation/Imaging_Data/dataset_info/")
+dfi<-read.csv("demdata_finalsample.csv")
+dfi <- dfi[which(dfi$participant!=1037), ]
+print('white:')
+sum(with(dfi,child_race == "W"))
+print('black:')
+sum(with(dfi,child_race == "B"))
+print('asian:')
+sum(with(dfi,child_race == "A"))
+print('mixed:')
+sum(with(dfi,child_race == "M"))
+```
+
+```{r}
+#RECOG BY TYPE OF QUESTION
+
+mean(dfall$recogimg)
+mean(dfall$recogtxt)
+
+t.test(dfall$recogimg, dfall$recogtxt, paired=TRUE)
+
+t.test(df$recogimg, df$recogtxt, paired=TRUE)
+
+t.test(dfk$recogimg, dfk$recogtxt, paired=TRUE)
+
+mean(dfk$recogimg)
+mean(dfk$recogtxt)
+```
+
+```{r}
+#CORRELATING AGE AND KBIT
+corr <- cor.test(dfall$kbit, dfall$age, method = "pearson")
+corr
+
+plot(dfall$age, dfall$kbit, main="",
+   xlab="Age", ylab="KBIT", pch=19)
+
+boxplot(dfk$kbit)$out #85
+boxplot(df$kbit)$out #126, 135
+
+#CORRELATING PARENTAL EDUCATION AND KBIT
+
+corr <- cor.test(dfall$kbit, dfall$g.edu, method = "pearson")
+corr
+
+plot(dfall$age, dfall$g.edu, main="",
+   xlab="Age", ylab="Parent Education", pch=19)
+
+# is there a difference in parental education by age group?
+anov <- aov(g.edu~group, data=dfall)
+summary(anov)
+
+anov.emm <- emmeans(anov, "group")
+
+summary(pairs(anov.emm), by = NULL, adjust = "none")  
+
+```
+
+```{r}
+#TEMPORAL ORDER
+
+#adults
+adult_temporalmemory <- lm(tempord ~ age + scaledcorz_within + kbit + cantab12, data=df)
+summary(adult_temporalmemory)
+
+#kids
+kids_temporalmemory <- lm(tempord ~ age_cont+scaledcorz_within + kbit + cantab12, data=dfk)
+summary(kids_temporalmemory)
+
+#kids_temporalmemory <- lm(tempord ~ age_cont*scaledcorz_within + kbit + cantab12, data=dfk)
+#summary(kids_temporalmemory)
+
+#kids_temporalmemory <- lm(tempord ~ group2*scaledcorz_within + kbit + cantab12, data=dfk)
+#summary(kids_temporalmemory)
+
+#interact_plot(kids_temporalmemory, pred = scaledcorz_within, modx = age_cont)
+
+#group/combined model
+#for this model, create an "adult-like segmentation" variable
+all_temporalmemory <- lm(tempord ~ group*scaledcorz_adultlike + age + kbit + cantab12, data=dfall)
+summary(all_temporalmemory)
+
+#all_temporalmemoryint <- lm(tempord ~ group2*scaledcorz_adultlike + kbit + cantab12, data=dfall)
+#summary(all_temporalmemoryint)
+library(interactions)
+
+interact_plot(all_temporalmemory, pred = scaledcorz_adultlike, modx = group, plot.points = TRUE)
+
+sim_slopes(all_temporalmemory, pred = scaledcorz_adultlike, modx = group, johnson_neyman = FALSE)
+
+
+#checking diff in temporal order memory by all 3 age groups (lme only shows adults vs. both groups of kids)
+all_temporalmemory.emm <- emmeans(all_temporalmemory, "group2")
+
+#use adjust - none so it matches the stats from the lme
+summary(pairs(all_temporalmemory.emm), by = NULL, adjust = "none")  
+
+#full model with age as continuous
+all_temporalmemory <- lm(tempord ~ age + scaledcorz_adultlike + kbit + cantab12, data=dfall)
+summary(all_temporalmemory)
+
+#testing whether younger kids are above chance on temporal order
+t.test(dfok$tempord, y = NULL,
+       alternative = c("greater"),
+       mu = 20, paired = FALSE, var.equal = FALSE,
+       conf.level = 0.95)
+
+#correlation between age and temporal order
+corr <- cor.test(dfk$age_cont, dfk$tempord, method = "pearson")
+corr
+```
+
+```{r}
+###TEMPORAL ORDER SPLIT UP
+#by within-within, within-boundary, and boundary-boundary
+
+all_bbtemporalmemory <- lm(tempord_b ~ group2 + scaledcorz_adultlike + kbit + cantab12, data=dfall)
+summary(all_bbtemporalmemory)
+
+all_bbtemporalmemory.emm <- emmeans(all_bbtemporalmemory, "group2")
+summary(pairs(all_bbtemporalmemory.emm), by = NULL, adjust = "none") 
+
+
+all_bwtemporalmemory <- lm(tempord_bw ~ group2 + scaledcorz_adultlike + kbit + cantab12, data=dfall)
+summary(all_bwtemporalmemory)
+
+all_bwtemporalmemory.emm <- emmeans(all_bwtemporalmemory, "group2")
+summary(pairs(all_bwtemporalmemory.emm), by = NULL, adjust = "none") 
+
+
+all_wwtemporalmemory <- lm(tempord_w ~ group2 + scaledcorz_adultlike + kbit + cantab12, data=dfall)
+summary(all_wwtemporalmemory)
+
+all_wwtemporalmemory.emm <- emmeans(all_wwtemporalmemory, "group2")
+summary(pairs(all_wwtemporalmemory.emm), by = NULL, adjust = "none") 
+
+
+
+#TEMPORD by border vs within
+
+#ANOVA
+
+df_temp <- dfall %>%
+  gather(key = "type", value = "score", tempord_b, tempord_w, tempord_bw) %>%
+  convert_as_factor(pp, type)
+
+res.aov <- anova_test(data = df_temp, dv = score, wid = pp, within = type)
+get_anova_table(res.aov)
+
+
+pwc <- df_temp %>%
+  pairwise_t_test(
+    score ~ type, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc
+```
+
+
+```{r}
+#RECOGNITION
+
+#adults
+adult_recogmemory <- lm(recog ~ age + scaledcorz_within + kbit + cantab12, data=df)
+summary(adult_recogmemory)
+
+#kids
+kids_recogmemory <- lm(recog ~ age_cont + scaledcorz_within  + kbit + cantab12, data=dfk)
+summary(kids_recogmemory)
+
+#kids_recogmemory <- lm(recog ~ age_cont*scaledcorz_within  + kbit + cantab12, data=dfk)
+#summary(kids_recogmemory)
+
+#interact_plot(kids_recogmemory, pred = scaledcorz_within, modx = age_cont)
+
+
+#group/combined model
+#for this model, create an "adult-like segmentation" variable
+all_recogmemory <- lm(recog ~ group2 + scaledcorz_adultlike + kbit + cantab12, data=dfall)
+summary(all_recogmemory)
+
+all_recogmemory <- lm(recog ~ group*scaledcorz_adultlike + age + kbit + cantab12, data=dfall)
+summary(all_recogmemory)
+
+#plotting the interaction
+library(interactions)
+interact_plot(all_recogmemory, pred = scaledcorz_adultlike, modx = group)
+
+sim_slopes(all_recogmemory, pred = scaledcorz_adultlike, modx = group, johnson_neyman = FALSE)
+
+
+#checking for differences by all three age groups
+all_recogmemory.emm <- emmeans(all_recogmemory, "group2")
+
+summary(pairs(all_recogmemory.emm), by = NULL, adjust = "none")  
+
+#correlation between age and recog memory
+corr <- cor.test(dfk$age_cont, dfk$recog, method = "pearson")
+corr
+
+recogmemory <- lm(recog ~ group2, data=dfall)
+summary(recogmemory) # same results as above for age predicting recognition
+
+
+#checking direction of relationship between within seg in kids and recog memory
+plot(dfk$recog, dfk$scaledcorz_within, main="",
+   xlab="Recognition", ylab="Segmentation Agreement Score", pch=19)
+
+boxplot(dfall$scaledcorz_adultlike)$out
+boxplot(df$scaledcorz_adultlike)$out
+dfall<-dfall[which(dfall$scaledcorz_adultlike<.94), ]
+
+#testing whether younger kids are above chance on recognition
+t.test(dfok$recog, y = NULL,
+       alternative = c("greater"),
+       mu = 7, paired = FALSE, var.equal = FALSE,
+       conf.level = 0.95)
+
+
+```
+
+```{r}
+#SEGMENTATION AGREEMENT
+
+#adults
+adult_seg <- lm(scaledcorz_within ~ age + tempord + recog + kbit + cantab12, data=df)
+summary(adult_seg)
+
+#kids
+kids_seg <- lm(scaledcorz_within ~ age_cont + tempord + recog + kbit + cantab12, data=dfk)
+summary(kids_seg)
+
+#group/combined model
+all_seg <- lm(scaledcorz_adultlike ~ group2 + tempord + recog + kbit + cantab12, data=dfall)
+summary(all_seg)
+
+#check diff in event seg by all three age groups
+all_seg.emm <- emmeans(all_seg, "group2")
+
+summary(pairs(all_seg.emm), by = NULL, adjust = "none") 
+
+#correlations between age and adultlike seg in al three age groups
+corrk <- cor.test(dfk$age_cont, dfk$scaledcorz_ktoa, method = "pearson")
+corrk
+
+corryk <- cor.test(dfyk$age_cont, dfyk$scaledcorz_ktoa, method = "pearson")
+corryk
+
+corrok <- cor.test(dfok$age_cont, dfok$scaledcorz_ktoa, method = "pearson")
+corrok
+```
+
+
+```{r}
+#Number of button presses kids vs. adults
+res.ftest <- var.test(nbps ~ group, data = df1)
+res.ftest
+
+res <- t.test(nbps ~ group, data = df1, var.equal = FALSE)
+res
+```
+
+
+```{r}
+#ANOVAs for diff type of temporal order - csv contains only the necessary items so it can be melted
+
+tempordtype<-read.csv("/Users/susanbenear/Google_Drive/Learning_and_Lemurs/Data/Data_Analysis/temporalorderonly1.csv")
+
+tempordtypeadults<-tempordtype[which(tempordtype$age>8), ]
+tempordtypekids<-tempordtype[which(tempordtype$age<9), ]
+
+tempordtype=subset(tempordtype, select = -c(age))
+tempordtypeadults=subset(tempordtypeadults, select = -c(age))
+tempordtypekids=subset(tempordtypekids, select = -c(age))
+
+describe(tempordtypeadults)
+
+library(reshape)
+tempordmelted<-melt(tempordtype, id=c("pp"))
+tempordmeltedadults<-melt(tempordtypeadults, id=c("pp"))
+tempordmeltedkids<-melt(tempordtypekids, id=c("pp"))
+
+
+modelall <- aov(value ~ variable, data = tempordmelted)
+summary(modelall)
+
+modeladults <- aov(value ~ variable, data = tempordmeltedadults)
+summary(modeladults)
+
+TukeyHSD(modeladults, conf.level=.95)
+
+modeladults.emm <- emmeans(modeladults, "variable")
+summary(pairs(modeladults.emm), by = NULL, adjust = "none")  
+
+modelkids <- aov(value ~ variable, data = tempordmeltedkids)
+summary(modelkids)
+
+```
